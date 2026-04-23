@@ -21,7 +21,6 @@
 ### Prerequisites
 
 - **Java JDK 11** (or higher)
-- **Apache Maven** (3.6+)
 - **NetBeans IDE** (or any Java IDE)
 - **Apache Tomcat 9** (configured in your IDE)
 
@@ -29,16 +28,12 @@
 
 - Clone the repository:
   ```bash
-  git clone [Insert GitHub Link]
+  git clone https://github.com/ThevinuJ/w2152987_csa_cw
   ```
 - Open the project in **NetBeans** (File → Open Project → select the project folder).
 - Make sure Apache Tomcat 9 is configured as your server in NetBeans (Tools → Servers → Add Server).
 - **Build** the project: right-click the project → Clean and Build.
 - **Run** the project: right-click the project → Run.
-- Alternatively, you can run it from the terminal:
-  ```bash
-  mvn clean compile exec:java
-  ```
 - The API will be available at:
   ```
   http://localhost:8080/api/v1/
