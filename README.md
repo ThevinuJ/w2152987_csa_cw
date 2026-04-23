@@ -1,9 +1,9 @@
 # Smart Campus Sensor & Room Management API
 
 **Module:** 5COSC022W – Client-Server Architectures  
-**Student Name:** [Insert Name]  
-**Student ID:** [Insert ID]  
-**GitHub Repository:** [Insert Link]
+**Student Name:** Thevinu Jayasekara  
+**Student ID:** w2152987 / 20241953  
+**GitHub Repository:** https://github.com/w2152987/w2152987_csa_cw
 
 ---
 
