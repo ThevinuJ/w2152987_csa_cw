@@ -86,29 +86,29 @@ flowchart TB
 ### Domain Model Relationships
 
 ```mermaid
-erDiagram
-    Room ||--o{ Sensor : "contains (via sensorIds)"
-    Sensor ||--o{ SensorReading : "has many"
+classDiagram
+    Room "1" --> "*" Sensor : contains via sensorIds
+    Sensor "1" --> "*" SensorReading : has many
 
-    Room {
-        string id
-        string name
-        int capacity
-        list sensorIds
+    class Room {
+        id
+        name
+        capacity
+        sensorIds
     }
 
-    Sensor {
-        string id
-        string type
-        string status
-        double currentValue
-        string roomId
+    class Sensor {
+        id
+        type
+        status
+        currentValue
+        roomId
     }
 
-    SensorReading {
-        string id
-        long timestamp
-        double value
+    class SensorReading {
+        id
+        timestamp
+        value
     }
 ```
 
