@@ -91,24 +91,24 @@ erDiagram
     Sensor ||--o{ SensorReading : "has many"
 
     Room {
-        String id PK
-        String name
-        int capacity
-        List sensorIds
+        id
+        name
+        capacity
+        sensorIds
     }
 
     Sensor {
-        String id PK
-        String type
-        String status
-        double currentValue
-        String roomId FK
+        id
+        type
+        status
+        currentValue
+        roomId
     }
 
     SensorReading {
-        String id PK
-        long timestamp
-        double value
+        id
+        timestamp
+        value
     }
 ```
 
