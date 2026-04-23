@@ -213,7 +213,7 @@ curl -X GET http://localhost:8080/api/v1/sensors/sensor-01/readings
 
 ## Written Report
 
-### Q1. Default Lifecycle of a JAX-RS Resource Class and In-Memory Data Management
+#### Q1. In your report, explain the default lifecycle of a JAX-RS Resource class. Is a new instance instantiated for every incoming request, or does the runtime treat it as a singleton? Elaborate on how this architectural decision impacts the way you manage and synchronize your in-memory data structures (maps/lists) to prevent data loss or race conditions.
 
 By default, JAX-RS resource classes are **per-request**, meaning a new instance of the class is created every time a client sends a request. This means if you store data in a regular instance variable inside the resource class, that data will be lost after the request finishes because the object gets garbage collected.
 
@@ -221,7 +221,7 @@ To solve this problem, I used a **Singleton `DataStore` class** that holds all t
 
 ---
 
-### Q2. Why HATEOAS Is Good for RESTful Design
+#### Q2. Why is the provision of ”Hypermedia” (links and navigation within responses) considered a hallmark of advanced RESTful design (HATEOAS)? How does this approach benefit client developers compared to static documentation?
 
 HATEOAS (Hypermedia as the Engine of Application State) means the server includes **links in its responses** that tell the client what actions or resources are available next. In my API, the discovery endpoint at `/api/v1/` returns a `_links` object pointing to `/api/v1/rooms` and `/api/v1/sensors`.
 
@@ -229,7 +229,7 @@ This is helpful for client developers because they don't need to hardcode every 
 
 ---
 
-### Q3. Returning IDs vs. Full Room Objects When Listing Rooms
+#### Q3. When returning a list of rooms, what are the implications of returning only IDs versus returning the full room objects? Consider network bandwidth and client side processing.
 
 **Returning just the IDs** uses less bandwidth because the response payload is smaller — you're only sending a list of short strings. However, the downside is that the client then has to make a separate GET request for each individual room to get the full details, which creates more network round trips.
 
