@@ -3,7 +3,7 @@
 > **Module:** 5COSC022W — Client-Server Architectures  
 > **Student:** Thevinu Jayasekara  
 > **Student ID:** w2152987 / 20241953
-> **GitHub:** [INSERT LINK HERE]
+> **GitHub:** https://github.com/ThevinuJ/w2152987_csa_cw
 
 ---
 
