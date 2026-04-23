@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <!--
+        JAX-RS Bootstrap Note:
+        The Jersey (JAX-RS) application is bootstrapped automatically via the
+        @ApplicationPath("/api/v1") annotation on SmartCampusApplication.java.
+        No explicit servlet mapping is required here (Servlet 3.0+ auto-discovery).
+    -->
+
+</web-app>
