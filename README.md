@@ -213,6 +213,8 @@ curl -X GET http://localhost:8080/api/v1/sensors/sensor-01/readings
 
 ## Written Report
 
+### Part 1: Service Architecture & Setup
+
 #### Q1. In your report, explain the default lifecycle of a JAX-RS Resource class. Is a new instance instantiated for every incoming request, or does the runtime treat it as a singleton? Elaborate on how this architectural decision impacts the way you manage and synchronize your in-memory data structures (maps/lists) to prevent data loss or race conditions.
 
 By default, JAX-RS resource classes are **per-request**, meaning a new instance of the class is created every time a client sends a request. This means if you store data in a regular instance variable inside the resource class, that data will be lost after the request finishes because the object gets garbage collected.
@@ -228,8 +230,9 @@ HATEOAS (Hypermedia as the Engine of Application State) means the server include
 This is helpful for client developers because they don't need to hardcode every URL in their application. They can start from the root endpoint and follow the links dynamically, which makes it easier to use the API and also means the server can change its URL structure without breaking the client.
 
 ---
+### Part 2: Room Management
 
-#### Q3. When returning a list of rooms, what are the implications of returning only IDs versus returning the full room objects? Consider network bandwidth and client side processing.
+#### Q1. When returning a list of rooms, what are the implications of returning only IDs versus returning the full room objects? Consider network bandwidth and client side processing.
 
 **Returning just the IDs** uses less bandwidth because the response payload is smaller — you're only sending a list of short strings. However, the downside is that the client then has to make a separate GET request for each individual room to get the full details, which creates more network round trips.
 
@@ -237,7 +240,7 @@ This is helpful for client developers because they don't need to hardcode every 
 
 ---
 
-### Q4. Is the DELETE Operation Idempotent?
+#### Q2. Is the DELETE operation idempotent in your implementation? Provide a detailed justification by describing what happens if a client mistakenly sends the exact same DELETE request for a room multiple times.
 
 In my implementation, the first `DELETE` request for a room returns **204 No Content** (success), but if the client tries to delete the same room again, it returns **404 Not Found** because the room no longer exists. Strictly speaking, this means the response changes between calls, which some argue breaks pure idempotency.
 
@@ -245,7 +248,9 @@ However, the key idea behind idempotency is that the **server state** doesn't ch
 
 ---
 
-### Q5. What Happens When a Client Sends text/plain to an @Consumes(APPLICATION_JSON) Endpoint
+### Part 3: Sensor Operations & Linking
+
+#### Q1. We explicitly use the @Consumes (MediaType.APPLICATION_JSON) annotation on the POST method. Explain the technical consequences if a client attempts to send data in a different format, such as text/plain or application/xml. How does JAX-RS handle this mismatch?
 
 If a client sends a request with the `Content-Type: text/plain` header to an endpoint that is annotated with `@Consumes(MediaType.APPLICATION_JSON)`, the JAX-RS runtime will **reject the request** before it even reaches the resource method. The server will automatically return a **415 Unsupported Media Type** response.
 
@@ -253,15 +258,16 @@ This happens because JAX-RS checks the incoming `Content-Type` header against th
 
 ---
 
-### Q6. @QueryParam for Filtering vs. Using a URL Path Segment
+#### Q2. You implemented this filtering using @QueryParam. Contrast this with an alternative design where the type is part of the URL path (e.g., /api/vl/sensors/type/CO2). Why is the query parameter approach generally considered superior for filtering and searching collections?
 
 Using a **`@QueryParam`** like `?type=CO2` is better for filtering because query parameters are designed for optional, non-hierarchical data. The URL `/api/v1/sensors` represents the whole sensors collection, and adding `?type=CO2` is just narrowing down that collection. The base resource identity stays the same.
 
 If I used a path segment like `/sensors/type/CO2`, it would imply that `type/CO2` is a distinct, separate resource in the URL hierarchy, which it isn't — it's just a filtered view of the same collection. Query parameters are also easier to combine (e.g., `?type=CO2&status=ACTIVE`) without creating complicated nested URL paths.
 
 ---
+### Part 4: Deep Nesting with Sub - Resources
 
-### Q7. Benefits of Using a Sub-Resource Locator for Sensor Readings
+#### Q1. Discuss the architectural benefits of the Sub-Resource Locator pattern. How does delegating logic to separate classes help manage complexity in large APIs compared to defining every nested path (e.g., sensors/{id}/readings/{rid}) in one massive controller class?
 
 In my API, the `SensorResource` class has a method annotated with `@Path("/{sensorId}/readings")` that returns a `SensorReadingResource` object. This is a **sub-resource locator** pattern. The main benefit is **separation of concerns** — all the logic for handling readings (GET, POST) lives in its own class, keeping the `SensorResource` class clean and focused only on sensor-level operations.
 
@@ -269,7 +275,9 @@ This also improves **maintainability and scalability**. If I ever need to add mo
 
 ---
 
-### Q8. Why HTTP 422 Is Better Than 404 for an Invalid roomId in a POST Body
+### Part 5: Error Handling, Exception Mapping & Logging
+
+#### Q1. Why is HTTP 422 often considered more semantically accurate than a standard 404 when the issue is a missing reference inside a valid JSON payload?
 
 A **404 Not Found** means the URL the client is requesting doesn't exist. But when a client POSTs to `/api/v1/sensors` with a valid JSON body that contains a `roomId` that doesn't exist in the system, the URL itself is perfectly fine — it's the **content of the request body** that has the problem. Using 404 here would be misleading.
 
@@ -277,7 +285,7 @@ A **404 Not Found** means the URL the client is requesting doesn't exist. But wh
 
 ---
 
-### Q9. Why Exposing Internal Java Stack Traces Is a Cybersecurity Risk
+#### Q2. From a cybersecurity standpoint, explain the risks associated with exposing internal Java stack traces to external API consumers. What specific information could an attacker gather from such a trace?
 
 When an unhandled exception occurs and the server returns a raw Java stack trace to the client, it reveals **internal implementation details** such as package names, class names, file paths, library versions, and even line numbers. An attacker can use this information to identify which frameworks and versions the application is using and then look for known vulnerabilities for those specific versions.
 
@@ -285,7 +293,7 @@ This is why I implemented a `GlobalExceptionMapper` that catches all unhandled `
 
 ---
 
-### Q10. Why JAX-RS Filters Are Better Than Manual Logging in Every Method
+#### Q3. Why is it advantageous to use JAX-RS filters for cross-cutting concerns like logging, rather than manually inserting Logger.info() statements inside every single resource method?
 
 If I manually added `Logger.info()` calls at the start and end of every single resource method, I would have a lot of **duplicated, repetitive code** scattered across all my resource classes. If I ever wanted to change the log format or add extra information, I would have to update every single method individually, which is error-prone and hard to maintain.
 
@@ -293,29 +301,11 @@ By using a JAX-RS `@Provider` filter like my `LoggingFilter` class (which implem
 
 ---
 
-## Project Structure
+### Video demonstration
 
-```
-src/main/java/com/smartcampus/
-├── Main.java                          # Entry point – starts Grizzly server
-├── SmartCampusApplication.java        # JAX-RS Application config (@ApplicationPath)
-├── model/
-│   ├── Room.java                      # Room POJO
-│   ├── Sensor.java                    # Sensor POJO
-│   └── SensorReading.java            # SensorReading POJO
-├── resource/
-│   ├── DiscoveryResource.java         # Root endpoint with HATEOAS links
-│   ├── RoomResource.java              # CRUD operations for rooms
-│   ├── SensorResource.java            # CRUD operations for sensors
-│   └── SensorReadingResource.java     # Sub-resource for sensor readings
-├── store/
-│   └── DataStore.java                 # Singleton in-memory data store
-├── exception/
-│   ├── LinkedResourceNotFoundException.java
-│   ├── RoomNotEmptyException.java
-│   └── SensorUnavailableException.java
-└── filter/
-    └── LoggingFilter.java             # Request/Response logging filter
-```
+The full video walkthrough was recorded separately and submitted via Blackboard.
 
----
+### References
+
+- Course module: 5COSC022W — University of Westminster
+- No Spring Boot or database technology was used, as required by the coursework brief
