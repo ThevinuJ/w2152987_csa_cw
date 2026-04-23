@@ -91,24 +91,24 @@ erDiagram
     Sensor ||--o{ SensorReading : "has many"
 
     Room {
-        id
-        name
-        capacity
-        sensorIds
+        string id
+        string name
+        int capacity
+        list sensorIds
     }
 
     Sensor {
-        id
-        type
-        status
-        currentValue
-        roomId
+        string id
+        string type
+        string status
+        double currentValue
+        string roomId
     }
 
     SensorReading {
-        id
-        timestamp
-        value
+        string id
+        long timestamp
+        double value
     }
 ```
 
