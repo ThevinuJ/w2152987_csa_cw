@@ -51,7 +51,7 @@ public class SensorReadingResource {
                     "Sensor '" + sensorId + "' is currently under MAINTENANCE and cannot accept readings.");
         }
 
-        // Auto-set id and timestamp if not provided
+        
         if (reading.getId() == null || reading.getId().isBlank()) {
             reading.setId(UUID.randomUUID().toString());
         }
@@ -59,7 +59,7 @@ public class SensorReadingResource {
             reading.setTimestamp(System.currentTimeMillis());
         }
 
-        // Add reading and update sensor's current value
+        
         store.getReadingsForSensor(sensorId).add(reading);
         sensor.setCurrentValue(reading.getValue());
 

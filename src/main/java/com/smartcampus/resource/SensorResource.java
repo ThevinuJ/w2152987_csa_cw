@@ -78,7 +78,7 @@ public class SensorResource {
         return Response.ok(sensor).build();
     }
 
-    // --- NEWLY ADDED PUT METHOD ---
+    
     @PUT
     @Path("/{sensorId}")
     public Response updateSensor(@PathParam("sensorId") String sensorId, Sensor updatedSensor) {
@@ -90,7 +90,7 @@ public class SensorResource {
 
         updatedSensor.setId(sensorId);
 
-        // Validate that the new room exists if they are changing rooms
+    
         if (updatedSensor.getRoomId() != null && !store.getRooms().containsKey(updatedSensor.getRoomId())) {
             throw new LinkedResourceNotFoundException(
                     "Room with id '" + updatedSensor.getRoomId() + "' does not exist. Cannot update sensor.");
@@ -100,7 +100,7 @@ public class SensorResource {
         return Response.ok(updatedSensor).build();
     }
 
-    // --- NEWLY ADDED DELETE METHOD ---
+    
     @DELETE
     @Path("/{sensorId}")
     public Response deleteSensor(@PathParam("sensorId") String sensorId) {
@@ -111,21 +111,18 @@ public class SensorResource {
                     .build();
         }
 
-        // Clean up: Remove the sensor from the Room's list so it doesn't leave a ghost ID
+        
         if (sensor.getRoomId() != null && store.getRooms().containsKey(sensor.getRoomId())) {
             Room room = store.getRooms().get(sensor.getRoomId());
             room.getSensorIds().remove(sensorId);
         }
 
-        // Delete the sensor itself
+        
         store.getSensors().remove(sensorId);
         return Response.noContent().build();
     }
 
-    /**
-     * Sub-resource locator for sensor readings.
-     * Delegates all /sensors/{sensorId}/readings requests to SensorReadingResource.
-     */
+    
     @Path("/{sensorId}/readings")
     public SensorReadingResource getSensorReadingResource(@PathParam("sensorId") String sensorId) {
         return new SensorReadingResource(sensorId);
