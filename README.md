@@ -61,6 +61,57 @@ flowchart LR
     Server -- "Read / Write" --> DataStore
 ```
 
+### Resource Hierarchy
+
+```mermaid
+flowchart TB
+    Root["/api/v1"]
+
+    Root --> Rooms["/rooms"]
+    Root --> Sensors["/sensors"]
+
+    Rooms --> RoomId["/rooms/{roomId}"]
+
+    Sensors --> SensorId["/sensors/{sensorId}"]
+    SensorId --> Readings["/sensors/{sensorId}/readings"]
+
+    style Root fill:#4a90d9,color:#fff
+    style Rooms fill:#50c878,color:#fff
+    style RoomId fill:#50c878,color:#fff
+    style Sensors fill:#f5a623,color:#fff
+    style SensorId fill:#f5a623,color:#fff
+    style Readings fill:#e74c3c,color:#fff
+```
+
+### Domain Model Relationships
+
+```mermaid
+erDiagram
+    Room ||--o{ Sensor : "contains (via sensorIds)"
+    Sensor ||--o{ SensorReading : "has many"
+
+    Room {
+        String id PK
+        String name
+        int capacity
+        List sensorIds
+    }
+
+    Sensor {
+        String id PK
+        String type
+        String status
+        double currentValue
+        String roomId FK
+    }
+
+    SensorReading {
+        String id PK
+        long timestamp
+        double value
+    }
+```
+
 ### API Endpoints Summary
 
 | Category      | Method   | Endpoint                              | Description                        | Status Codes              |
