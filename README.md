@@ -132,7 +132,7 @@ classDiagram
 
 ---
 
-## Sample cURL Commands
+## Sample CURL Commands
 
 ### Discovery
 
