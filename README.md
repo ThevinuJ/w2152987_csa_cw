@@ -21,8 +21,8 @@
 ### Prerequisites
 
 - **Java JDK 11** (or higher)
-- **NetBeans IDE** (or any Java IDE)
-- **Apache Tomcat 9** (configured in your IDE)
+- **NetBeans IDE** 
+- **Apache Tomcat 9** 
 
 ### Steps to Run
 
